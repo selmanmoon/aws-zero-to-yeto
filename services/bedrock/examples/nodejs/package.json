@@ -1,0 +1,22 @@
+{
+  "name": "aws-zero-to-yeto-bedrock",
+  "version": "1.0.0",
+  "description": "AWS ZERO to YETO - Bedrock Örnek Uygulaması",
+  "main": "bedrock_example.js",
+  "scripts": {
+    "start": "node bedrock_example.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock": "^3.400.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.400.0"
+  },
+  "keywords": [
+    "aws",
+    "bedrock",
+    "ai",
+    "machine-learning"
+  ],
+  "author": "AWS ZERO to YETO",
+  "license": "MIT"
+}

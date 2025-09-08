@@ -1,0 +1,4 @@
+boto3>=1.26.0
+botocore>=1.29.0
+pymysql>=1.0.2
+psycopg2-binary>=2.9.5

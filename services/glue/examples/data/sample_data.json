@@ -1,0 +1,10 @@
+[
+  {"id": 1, "name": "Ahmet Yılmaz", "age": 28, "city": "İstanbul", "salary": 75000, "department": "IT", "hire_date": "2020-01-15"},
+  {"id": 2, "name": "Ayşe Kaya", "age": 32, "city": "Ankara", "salary": 82000, "department": "HR", "hire_date": "2019-03-22"},
+  {"id": 3, "name": "Mehmet Demir", "age": 25, "city": "İzmir", "salary": 68000, "department": "Finance", "hire_date": "2021-06-10"},
+  {"id": 4, "name": "Fatma Şahin", "age": 29, "city": "Bursa", "salary": 71000, "department": "IT", "hire_date": "2020-11-05"},
+  {"id": 5, "name": "Ali Özkan", "age": 35, "city": "Antalya", "salary": 89000, "department": "Sales", "hire_date": "2018-09-12"},
+  {"id": 6, "name": "Zeynep Arslan", "age": 27, "city": "İstanbul", "salary": 73000, "department": "Marketing", "hire_date": "2021-02-28"},
+  {"id": 7, "name": "Murat Kılıç", "age": 31, "city": "Ankara", "salary": 85000, "department": "IT", "hire_date": "2019-07-18"},
+  {"id": 8, "name": "Elif Çelik", "age": 26, "city": "İzmir", "salary": 69000, "department": "HR", "hire_date": "2022-01-10"}
+]
