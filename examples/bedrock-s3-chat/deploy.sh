@@ -47,7 +47,7 @@ def lambda_handler(event, context):
         
         response = bedrock.invoke_model(
             body=json.dumps(model_input),
-            modelId='anthropic.claude-3-sonnet-20240229-v1:0',
+            modelId='anthropic.claude-3-5-sonnet-20240620-v1:0',
             accept='application/json',
             contentType='application/json'
         )
@@ -83,7 +83,14 @@ def lambda_handler(event, context):
 EOF
 
 # Lambda zip
-zip lambda_function.zip lambda_function.py
+if command -v zip >/dev/null 2>&1; then
+    zip lambda_function.zip lambda_function.py
+elif command -v 7z >/dev/null 2>&1; then
+    7z a -tzip lambda_function.zip lambda_function.py
+else
+    echo "Hata: zip veya 7z komutu bulunamadı. Lütfen zip veya 7-Zip yükleyin." >&2
+    exit 1
+fi
 
 # 3. IAM Role
 print_info "🔐 IAM role oluşturuluyor..."
@@ -99,8 +106,26 @@ cat > permissions.json << EOF
 {
     "Version": "2012-10-17",
     "Statement": [
-        {"Effect": "Allow", "Action": ["bedrock:InvokeModel"], "Resource": "*"},
-        {"Effect": "Allow", "Action": ["s3:GetObject", "s3:PutObject"], "Resource": "arn:aws:s3:::${BUCKET_NAME}/*"}
+        {
+            "Effect": "Allow", 
+            "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream"
+            ], 
+            "Resource": [
+                "arn:aws:bedrock:*::foundation-model/anthropic.claude-*",
+                "arn:aws:bedrock:*:*:inference-profile/us.anthropic.claude-*",
+                "arn:aws:bedrock:*:*:inference-profile/anthropic.claude-*"
+            ]
+        },
+        {
+            "Effect": "Allow", 
+            "Action": [
+                "s3:GetObject", 
+                "s3:PutObject"
+            ], 
+            "Resource": "arn:aws:s3:::${BUCKET_NAME}/*"
+        }
     ]
 }
 EOF
