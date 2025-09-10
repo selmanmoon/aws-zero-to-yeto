@@ -16,7 +16,7 @@ Kullanıcı → API Gateway → Lambda → Bedrock (Claude 3)
 
 ## 🚀 Kullanılan Servisler
 
-- **Bedrock**: Claude 3 Sonnet AI modeli
+- **Bedrock**: Claude 3.5 Sonnet AI modeli
 - **Lambda**: API işleme ve orchestration
 - **S3**: Konuşma geçmişi depolama
 - **API Gateway**: REST API endpoint
@@ -44,6 +44,38 @@ Kullanıcı → API Gateway → Lambda → Bedrock (Claude 3)
 cd examples/bedrock-s3-chat
 ./deploy.sh
 ```
+
+## ⚠️ Windows Kullanıcıları için Notlar
+
+Eğer Windows kullanıyorsanız, bu scripti doğrudan Komut İstemi (cmd) veya PowerShell ile çalıştıramazsınız. Bunun yerine aşağıdaki yöntemlerden birini kullanmalısınız:
+
+### 1. Git Bash veya WSL ile Çalıştırma
+- [Git Bash](https://gitforwindows.org/) veya WSL (Windows Subsystem for Linux) kurun.
+- Scriptin olduğu klasöre terminal ile gidin:
+  ```bash
+  cd examples/bedrock-s3-chat
+  bash deploy.sh
+  ```
+- WSL kullanıyorsanız, Ubuntu terminalinde aynı komutları kullanabilirsiniz.
+
+### 2. 7-Zip Kurulumu ve Ortam Değişkeni
+- Script, zip komutunu bulamazsa 7z (7-Zip) komutunu kullanır.
+- Zip hatası alırsanız, [7-Zip'i indirin](https://www.7-zip.org/download.html) ve kurun.
+- Kurulumdan sonra, 7-Zip'in kurulu olduğu klasörü (genellikle `C:\Program Files\7-Zip`) ortam değişkenlerine (Path) ekleyin:
+  1. Başlat menüsüne "Ortam Değişkenleri" yazın ve açın.
+  2. "Path" değişkenini seçip "Düzenle"ye tıklayın.
+  3. "Yeni" deyip `C:\Program Files\7-Zip` yolunu ekleyin.
+  4. Tüm pencereleri "Tamam" ile kapatın ve terminali yeniden başlatın.
+- Kurulumun başarılı olduğunu test etmek için terminale şunu yazın:
+  ```bash
+  7z
+  ```
+  Eğer 7-Zip sürüm bilgisi geliyorsa, kurulum tamamdır.
+
+### 3. zip/7z Hatası Alırsanız
+- Eğer `zip` veya `7z` komutu bulunamadı hatası alırsanız, yukarıdaki adımları uygulayın.
+- 7z komutunu ekledikten sonra script otomatik olarak 7z ile zip dosyası oluşturacaktır.
+
 
 ## 📋 Test Senaryoları
 
@@ -141,10 +173,10 @@ aws cloudwatch get-metric-statistics \
 
 #### 5. Bedrock Modelini Test Edin
 ```bash
-# Doğrudan Bedrock API'sini test et
+# Doğrudan Bedrock API'sini test et (Claude 3.5 Messages format)
 aws bedrock-runtime invoke-model \
-    --model-id anthropic.claude-3-sonnet-20240229-v1:0 \
-    --body '{"prompt": "Merhaba, AWS hakkında bilgi ver", "max_tokens": 100}' \
+    --model-id us.anthropic.claude-3-5-sonnet-20240620-v1:0' \
+    --body '{"anthropic_version": "bedrock-2023-05-31", "max_tokens": 100, "messages": [{"role": "user", "content": "Merhaba, AWS hakkında bilgi ver"}]}' \
     --cli-binary-format raw-in-base64-out \
     response.json
 

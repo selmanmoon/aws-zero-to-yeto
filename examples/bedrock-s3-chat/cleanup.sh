@@ -80,20 +80,38 @@ fi
 print_info "🔐 IAM Role siliniyor: $ROLE_NAME"
 if aws iam get-role --role-name "$ROLE_NAME" >/dev/null 2>&1; then
     # Role'dan policy'leri kaldır
-    aws iam list-attached-role-policies --role-name "$ROLE_NAME" --query 'AttachedPolicies[].PolicyArn' --output text | while read policy; do
-        if [ ! -z "$policy" ]; then
-            aws iam detach-role-policy --role-name "$ROLE_NAME" --policy-arn "$policy"
-            print_info "   Policy detached: $policy"
-        fi
-    done
+    print_info "   Attached policy'ler kontrol ediliyor..."
+    ATTACHED_POLICIES=$(aws iam list-attached-role-policies --role-name "$ROLE_NAME" --query 'AttachedPolicies[].PolicyArn' --output text)
+    
+    if [ ! -z "$ATTACHED_POLICIES" ] && [ "$ATTACHED_POLICIES" != "None" ]; then
+        echo "$ATTACHED_POLICIES" | tr '\t' '\n' | tr ' ' '\n' | while read -r policy; do
+            policy=$(echo "$policy" | tr -d '\r\n' | xargs)  # Remove whitespace and newlines
+            if [ ! -z "$policy" ] && [ "$policy" != "None" ]; then
+                print_info "   Policy detaching: $policy"
+                aws iam detach-role-policy --role-name "$ROLE_NAME" --policy-arn "$policy"
+                print_success "   ✅ Policy detached: $policy"
+            fi
+        done
+    else
+        print_info "   No attached policies found"
+    fi
     
     # Inline policy'leri kaldır
-    aws iam list-role-policies --role-name "$ROLE_NAME" --query 'PolicyNames[]' --output text | while read policy; do
-        if [ ! -z "$policy" ]; then
-            aws iam delete-role-policy --role-name "$ROLE_NAME" --policy-name "$policy"
-            print_info "   Inline policy deleted: $policy"
-        fi
-    done
+    print_info "   Inline policy'ler kontrol ediliyor..."
+    INLINE_POLICIES=$(aws iam list-role-policies --role-name "$ROLE_NAME" --query 'PolicyNames[]' --output text)
+    
+    if [ ! -z "$INLINE_POLICIES" ] && [ "$INLINE_POLICIES" != "None" ]; then
+        echo "$INLINE_POLICIES" | tr '\t' '\n' | tr ' ' '\n' | while read -r policy; do
+            policy=$(echo "$policy" | tr -d '\r\n' | xargs)  # Remove whitespace and newlines
+            if [ ! -z "$policy" ] && [ "$policy" != "None" ]; then
+                print_info "   Inline policy deleting: $policy"
+                aws iam delete-role-policy --role-name "$ROLE_NAME" --policy-name "$policy"
+                print_success "   ✅ Inline policy deleted: $policy"
+            fi
+        done
+    else
+        print_info "   No inline policies found"
+    fi
     
     aws iam delete-role --role-name "$ROLE_NAME"
     print_success "✅ IAM Role silindi: $ROLE_NAME"
