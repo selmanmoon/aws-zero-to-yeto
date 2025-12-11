@@ -3,6 +3,9 @@
 # Bedrock + S3 - AI Chatbot (Basit versiyon)
 set -e
 
+# AWS CLI pager'ını devre dışı bırakarak script'in takılmasını önle
+export AWS_PAGER=""
+
 # Renkli çıktı
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
