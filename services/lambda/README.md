@@ -261,6 +261,14 @@ def lambda_handler(event, context):
     # İşlemi gerçekleştir
     pass
 ```
+▶️ Çalıştırma Adımları
+cd services        # Servis dizinine geç
+cd lambda             # lambda dizinine geç
+chmod +x deploy.sh cleanup.sh
+./deploy.sh        # Deploy işlemi
+./cleanup.sh       # Cleanup işlemi
+ 
+```
 
 ## 🧪 Test Senaryoları
 

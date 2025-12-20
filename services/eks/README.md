@@ -77,6 +77,14 @@ aws eks update-kubeconfig --region eu-central-1 --name demo-eks
 kubectl get nodes
 
 
+▶️ Çalıştırma Adımları
+cd services        # Servis dizinine geç
+cd eks             # EKS dizinine geç
+chmod +x deploy.sh cleanup.sh
+./deploy.sh        # Deploy işlemi  ***
+./cleanup.sh       # Cleanup işlemi ***
+
+
 🧪 Test Senaryoları:
 Microservice Platform (API gateway + backend servisler + HPA)
 CI/CD ile GitOps (ArgoCD / FluxCD ile deploy)

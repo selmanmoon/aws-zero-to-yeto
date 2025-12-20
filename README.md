@@ -20,6 +20,9 @@ Bu repository ile:
 - **Amazon Bedrock** - Generative AI ve Foundation Models
 - **AWS Glue** - ETL ve veri kataloğu
 
+### 🧮 Compute (Hesaplama) Servisleri
+**Amazon EKS (Elastic Kubernetes Service)** -Amazon EKS (Elastic Kubernetes Service)
+
 ### 🛠️ Temel AWS Servisleri
 - **AWS Lambda** - Serverless fonksiyonlar
 - **AWS IAM** - Kimlik ve erişim yönetimi
@@ -32,7 +35,8 @@ aws-zero-to-yeto/
 ├── examples/                    # Pratik AWS proje örnekleri
 │   ├── bedrock-s3-chat/        # Bedrock + S3 entegrasyonu
 │   ├── iot-data-pipeline/      # IoT veri işleme pipeline'ı
-│   └── s3-lambda-api/          # S3 + Lambda + API Gateway
+│   ├── s3-lambda-api/          # S3 + Lambda + API Gateway
+│   └── eks-microservice/       # EKS üzerinde örnek container uygulaması
 ├── services/                    # Her AWS servisi için ayrı klasör
 │   ├── s3/                     # Amazon S3 örnekleri
 │   ├── lambda/                 # AWS Lambda örnekleri
@@ -41,10 +45,12 @@ aws-zero-to-yeto/
 │   ├── bedrock/                # Amazon Bedrock örnekleri
 │   ├── sagemaker/              # Amazon SageMaker örnekleri
 │   ├── glue/                   # AWS Glue örnekleri
+│   ├── eks/                    # Amazon EKS (Managed Kubernetes) örnekleri
 │   ├── iam/                    # AWS IAM örnekleri
 │   └── cloudwatch/             # Amazon CloudWatch örnekleri
 ├── getting-started/            # Başlangıç rehberi
 └── cleanup.sh                  # Genel temizlik scripti
+
 ```
 
 ## 🚀 Hızlı Başlangıç
@@ -85,22 +91,25 @@ Başlamak için önce **[Başlangıç Rehberi](getting-started/getting-started.m
 
 ## 📖 Öğrenme Yolu
 
-### Seviye 1: Temeller
-1. **S3** - Dosya depolama temelleri
-2. **IAM** - Güvenlik ve erişim kontrolü
-3. **CloudWatch** - Monitoring ve loglama
+### Seviye I: Temeller
+I. **S3** – Dosya depolama temelleri  
+II. **IAM** – Güvenlik ve erişim kontrolü  
+III. **CloudWatch** – Monitoring ve loglama  
 
-### Seviye 2: Veri Servisleri
-1. **RDS** - İlişkisel veritabanları
-2. **DynamoDB** - NoSQL veritabanları
-3. **Glue** - ETL ve veri kataloğu
+### Seviye II: Veri Servisleri
+I. **RDS** – İlişkisel veritabanları  
+II. **DynamoDB** – NoSQL veritabanları  
+III. **Glue** – ETL ve veri kataloğu  
 
-### Seviye 3: AI/ML Servisleri
-1. **SageMaker** - Makine öğrenmesi
-2. **Bedrock** - Generative AI
+### Seviye III: AI/ML Servisleri
+I. **SageMaker** – Makine öğrenmesi  
+II. **Bedrock** – Generative AI  
 
-### Seviye 4: Serverless & Otomasyon
-1. **Lambda** - Serverless fonksiyonlar
+### Seviye IV: Serverless & Otomasyon
+I. **Lambda** – Serverless fonksiyonlar  
+
+### Seviye V: Container & Orchestration
+I. **EKS** – Ölçeklenebilir Kubernetes altyapısı
 
 ## 💡 Her Servis İçin Neler Var?
 

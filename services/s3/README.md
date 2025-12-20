@@ -64,6 +64,15 @@ Bucket (Kova)
     }
 ]
 ```
+▶️ Çalıştırma Adımları
+cd services        # Servis dizinine geç
+cd s3             # S3 dizinine geç
+
+chmod +x deploy.sh cleanup.sh
+
+./deploy.sh        # Deploy işlemi
+./cleanup.sh       # Cleanup işlemi
+ 
 
 ## 💰 Maliyet Hesaplama
 

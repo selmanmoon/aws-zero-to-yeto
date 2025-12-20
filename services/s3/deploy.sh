@@ -132,3 +132,10 @@ print_info "Test komutları:"
 echo "  aws s3 ls s3://$BUCKET_NAME/"
 echo "  aws s3 cp test.txt s3://$BUCKET_NAME/"
 echo "  aws s3 rm s3://$BUCKET_NAME/test.txt"
+
+Çalıştırma işlemi için:
+Terminalden cd services
+ cd s3
+ ./deploy.sh  deploy etme
+  ./cleanup.sh temizleme 
+ ile calistirip
