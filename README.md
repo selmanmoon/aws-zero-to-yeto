@@ -25,26 +25,31 @@ Bu repository ile:
 - **AWS IAM** - Kimlik ve erişim yönetimi
 - **Amazon CloudWatch** - Monitoring ve loglama
 
+### 📦 Container Orchestration & Kubernetes
+- **Amazon EKS** – Kubernetes servisi
+
 ## 📁 Repository Yapısı
 
 ```
 aws-zero-to-yeto/
 ├── examples/                    # Pratik AWS proje örnekleri
-│   ├── bedrock-s3-chat/        # Bedrock + S3 entegrasyonu
-│   ├── iot-data-pipeline/      # IoT veri işleme pipeline'ı
-│   └── s3-lambda-api/          # S3 + Lambda + API Gateway
+│   ├── bedrock-s3-chat/         # Bedrock + S3 entegrasyonu
+│   ├── iot-data-pipeline/       # IoT veri işleme pipeline'ı
+│   └── s3-lambda-api/           # S3 + Lambda + API Gateway
 ├── services/                    # Her AWS servisi için ayrı klasör
-│   ├── s3/                     # Amazon S3 örnekleri
-│   ├── lambda/                 # AWS Lambda örnekleri
-│   ├── rds/                    # Amazon RDS örnekleri
-│   ├── dynamodb/               # Amazon DynamoDB örnekleri
-│   ├── bedrock/                # Amazon Bedrock örnekleri
-│   ├── sagemaker/              # Amazon SageMaker örnekleri
-│   ├── glue/                   # AWS Glue örnekleri
-│   ├── iam/                    # AWS IAM örnekleri
-│   └── cloudwatch/             # Amazon CloudWatch örnekleri
-├── getting-started/            # Başlangıç rehberi
-└── cleanup.sh                  # Genel temizlik scripti
+│   ├── s3/                      # Amazon S3 örnekleri
+│   ├── lambda/                  # AWS Lambda örnekleri
+│   ├── rds/                     # Amazon RDS örnekleri
+│   ├── dynamodb/                # Amazon DynamoDB örnekleri
+│   ├── bedrock/                 # Amazon Bedrock örnekleri
+│   ├── sagemaker/               # Amazon SageMaker örnekleri
+│   ├── glue/                    # AWS Glue örnekleri
+│   ├── iam/                     # AWS IAM örnekleri
+│   ├── cloudwatch/              # Amazon CloudWatch örnekleri
+│   └── eks/                     # Amazon EKS (Kubernetes) örnekleri
+
+├── getting-started/             # Başlangıç rehberi
+└── cleanup.sh                   # Genel temizlik scripti
 ```
 
 ## 🚀 Hızlı Başlangıç
