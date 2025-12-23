@@ -74,13 +74,13 @@ Bu adımda Claude'a "Bak, benim aracım burada çalışıyor" diyeceğiz.
     
     ![Claude Settings Menu](assets/claude_settings_menu.png)
 
-3.  Bu ekranda **Developer** kısmına basınız.
+3.  Ayarlar penceresi açıldığında, sol taraftaki menüden **"Developer"** (Geliştirici) sekmesine tıklayın.
     ![Claude Settings Developer](assets/claude_settings_developer.png)
 
-4.  Ardından **Edit Config** butonuna tıklayın.
+4.  Developer ekranında, yerel MCP sunucularını yönetmemizi sağlayan **"Edit Config"** (Yapılandırmayı Düzenle) butonuna tıklayın. Bu işlem, varsayılan metin editörünüzde bir ayar dosyası açacaktır.
     ![Claude Edit Config](assets/claude_edit_config.png)
 
-5.  Açılan dosya buna benzer olacaktır. 
+5.  Açılan `claude_desktop_config.json` dosyası, Claude'un tanıdığı araçları listeler. Dosya içeriği buna benzer görünecektir:
     ![Claude Desktop Config](assets/claude_desktop_config.png)
 6.  Açılan dosyanın içine, işletim sisteminize uygun olan aşağıdaki kodu yapıştırın.
     *(⚠️ ÖNEMLİ: Dosya yollarını (Path) kendi bilgisayarınızdaki gerçek yollarla değiştirmeyi unutmayın!)*
@@ -93,6 +93,20 @@ Bu adımda Claude'a "Bak, benim aracım burada çalışıyor" diyeceğiz.
       "command": "/Users/ADINIZ/Documents/projeler/aws-zero-to-yeto/examples/aws-resource-mcp/venv/bin/python",
       "args": [
         "/Users/ADINIZ/Documents/projeler/aws-zero-to-yeto/examples/aws-resource-mcp/server.py"
+      ]
+    }
+  }
+}
+```
+
+#### 🐧 Linux Config Örneği:
+```json
+{
+  "mcpServers": {
+    "aws-inspector": {
+      "command": "/home/KULLANICIADI/projeler/aws-resource-mcp/venv/bin/python",
+      "args": [
+        "/home/KULLANICIADI/projeler/aws-resource-mcp/server.py"
       ]
     }
   }
