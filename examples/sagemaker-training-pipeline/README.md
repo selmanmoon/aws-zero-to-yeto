@@ -2,6 +2,14 @@
 
 Bu projede MNIST veri setini PyTorch framework kullanarak CNN modeliyle AWS SageMaker'da training işlemini yapacağız. Açıkcası buradaki MNIST datasetini eğitmek için en base bilgisayar dahil yeterli olacaktır ama buradaki benim amacım sistemi anlatmak ama isterseniz kapsamlı bir training örneği yapabiliriz. Mesela U-Net Modeli için bu sistemi deneyebiliriz.  
 
+## **İki Yöntem**
+
+Bu projeyi iki farklı şekilde çalıştırabilirsiniz:
+
+1. **Otomatik Deployment (Önerilen):** `deploy.sh` ve `cleanup.sh` script'lerini kullanarak tek komutla tüm işlemleri yapabilirsiniz. → [Script Kullanımı](#script-ile-otomatik-deployment)
+
+2. **Manuel Deployment:** Adım adım her komutu manuel olarak çalıştırabilirsiniz. → [Manuel Adımlar](#manuel-deployment-adımları)
+
 ## **Mimari**
 ```
 Kullanıcı → S3 (Veri Upload) → SageMaker (Training) → S3 (Model Output)
@@ -36,6 +44,103 @@ docker login
 
 SageMaker için gerekli izinlere sahip bir IAM role oluşturun. Role'ün en azından şu policy'lere sahip olması gerekir:
 - AmazonSageMakerFullAccess
+---
+
+## Script ile Otomatik Deployment
+
+Tüm işlemleri otomatik yapmak için iki script kullanılır:
+
+### 1. Data Hazırlama 
+ 
+```bash
+./prepare-data.sh
+```
+
+Bu script:
+- ✅ S3 bucket oluşturur
+- ✅ MNIST verisini indirir
+- ✅ Veriyi S3'e yükler
+- ✅ Bilgileri `.data-info` dosyasına kaydeder
+
+**Not:** Bu adım sadece **bir kere** yapılır. Birden fazla training job çalıştıracaksanız tekrar çalıştırmanıza gerek yok. O yüzden ayrı hazırladım. 
+
+### 2. Model Training 
+
+```bash
+./deploy.sh
+```
+
+Bu script:
+- ✅ `.data-info` dosyasından S3 bilgilerini okur
+- ✅ IAM role kontrol eder
+- ✅ ECR repository oluşturur
+- ✅ Docker image build edip ECR'a push eder
+- ✅ SageMaker training job başlatır
+- ✅ Deployment bilgilerini `.deployment-info` dosyasına kaydeder
+
+### 3. Temizlik
+
+```bash
+./cleanup.sh
+```
+
+Script `.deployment-info` ve `.data-info` dosyalarından bilgileri okuyarak:
+- ✅ Çalışan training job'ları durdurur
+- ✅ S3 bucket'ı ve içeriğini siler
+- ✅ ECR repository'yi ve image'ları siler
+- ✅ Lokal dosyaları temizler
+
+### İş Akışı
+
+```bash
+# 1. Data hazırla (bir kere)
+./prepare-data.sh
+
+# 2. Training başlat (istediğiniz kadar)
+./deploy.sh
+./deploy.sh  # Farklı hyperparameter ile tekrar
+./deploy.sh  # Başka bir model ile tekrar
+
+# 3. Temizlik 
+./cleanup.sh
+```
+
+### Örnek Kullanım
+
+```bash
+# İlk data hazırlığı
+$ ./prepare-data.sh
+Region: us-east-1
+Bucket [mnist-training-20260103]: my-mnist-bucket
+▶ Creating S3 bucket...
+▶ Downloading and uploading MNIST data...
+✓ Uploaded train_data.npy
+✓ Uploaded train_labels.npy
+✓ Uploaded test_data.npy
+✓ Uploaded test_labels.npy
+✓ Data prepared and uploaded to s3://my-mnist-bucket/mnist-data/
+Next: ./deploy.sh
+
+# Training başlat
+$ ./deploy.sh
+▶ Using existing data: s3://my-mnist-bucket/mnist-data/
+SageMaker Role: MySageMakerRole
+▶ Checking IAM role...
+▶ Setting up ECR...
+▶ Building and pushing Docker image...
+▶ Starting training job...
+✓ Deployed: mnist-training-job-20260103120000
+
+Monitor: aws sagemaker describe-training-job --training-job-name mnist-training-job-20260103120000
+Cleanup: ./cleanup.sh
+```
+
+---
+
+## Manuel Deployment Adımları
+
+Manuel olarak her adımı kontrol ederek ilerlemek istiyorsanız aşağıdaki adımları takip edin:
+
 - S3 bucket'ınıza erişim izinleri
 
 Mevcut SageMaker role'lerinizi kontrol etmek için:
@@ -171,16 +276,52 @@ aws sagemaker create-training-job \
   --output-data-config S3OutputPath=s3://<bucket-name>/mnist-output \
   --resource-config InstanceType=ml.m5.xlarge,InstanceCount=1,VolumeSizeInGB=30 \
   --stopping-condition MaxRuntimeInSeconds=3600
+```9. Temizlik
+
+### Otomatik Temizlik (Önerilen)
+
+```bash
+./cleanup.sh
 ```
 
-**Parametreler:**
-- `--training-job-name`: Benzersiz job ismi
-- `--algorithm-specification`: Docker image URI
-- `--role-arn`: IAM role ARN
-- `--input-data-config`: S3'teki training verisi
-- `--output-data-config`: Model'in kaydedileceği S3 yolu
-- `--resource-config`: Instance tipi (ml.m5.xlarge Free Tier'da kullanılabilir)
-- `--stopping-condition`: Maksimum training süresi
+### Manuel Temizlik
+
+İşlemler bitince kaynakları silin:
+
+```bash
+# Çalışan job'ları durdur (opsiyonel)
+aws sagemaker stop-training-job --training-job-name <job-name>
+
+# S3 bucket'ı temizle
+aws s3 rm s3://<bucket-name> --recursive
+aws s3api delete-bucket --bucket <bucket-name>
+
+# ECR repository'yi sil
+aws ecr delete-repository --repository-name mnist-training --force --region <region>
+
+# Lokal dosyaları temizle
+rm -rf ./data model.tar.gz
+```
+
+---
+
+## Hangi Yöntemi Seçmeliyim?
+
+| Özellik | Script (prepare + deploy) | Manuel |
+|---------|--------------------------|--------|
+| Hız | ⚡ Çok hızlı (5-10 dk) | 🐢 Yavaş (20-30 dk) |
+| Hata riski | ✅ Düşük | ⚠️ Yüksek |
+| Öğrenme | 📚 Temel | 📖 Detaylı |
+| Esneklik | 🔧 Orta | 🎯 Yüksek |
+| Tekrar Kullanım | ♻️ Data bir kere hazırla | 🔨 Her seferinde tekrar |
+| Cleanup | 🧹 Otomatik | 🔨 Manuel |
+
+**Tavsiye:** 
+- İlk defa çalıştırıyorsanız veya hızlı test etmek istiyorsanız → **Script'leri kullanın** (`prepare-data.sh` + `deploy.sh`)
+- Birden fazla training job çalıştıracaksanız → **Kesinlikle script'leri kullanın** (data hazırlığı bir kere yeter)
+- Sistem'i detaylı öğrenmek istiyorsanız → **Manuel adımları** takip edin
+
+---
 
 ## 7. Training İzleme
 

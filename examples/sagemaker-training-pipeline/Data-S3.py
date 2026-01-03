@@ -1,4 +1,3 @@
-# bucket_name girilecek s
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -55,9 +54,19 @@ print(f"Test labels shape: {test_labels.shape}")
 
 # S3'e yükle
 print("\nS3'e yükleniyor...")
-s3 = boto3.client('s3', region_name='eu-central-1')
-# Bucket Name Girilecek
-bucket_name = 'bucket-name-here'
+
+# AWS Region ve Bucket bilgilerini al
+region_name = input("AWS Region (örn: us-east-1, eu-central-1): ").strip()
+if not region_name:
+    print("❌ Region gerekli!")
+    exit(1)
+
+bucket_name = input("S3 Bucket Name: ").strip()
+if not bucket_name:
+    print("❌ Bucket name gerekli!")
+    exit(1)
+
+s3 = boto3.client('s3', region_name=region_name)
 
 files = ['train_data.npy', 'train_labels.npy', 'test_data.npy', 'test_labels.npy']
 for file in files:
