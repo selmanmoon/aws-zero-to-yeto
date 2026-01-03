@@ -11,21 +11,42 @@ if [ -f ".data-info" ]; then
     source .data-info
     info "Using existing data: s3://${BUCKET_NAME}/mnist-data/"
 else
-    warn "Data not prepared! Run ./prepare-data.sh first"
-    read -p "Continue anyway? (y/n): " -n 1 -r; echo
-    [[ ! $REPLY =~ ^[Yy]$ ]] && { echo "Run: ./prepare-data.sh"; exit 1; }
+    warn "Data not prepared! Preparing data first..."
     
     # AWS Region girin (örnek: us-east-1, eu-west-1)
     read -p "Region: " AWS_REGION
     [ -z "$AWS_REGION" ] && { echo "Region required"; exit 1; }
     
-    # S3 Bucket adı
-    read -p "Bucket: " BUCKET_NAME
-    [ -z "$BUCKET_NAME" ] && { echo "Bucket required"; exit 1; }
-fi
+    # S3 Bucket adı (boş bırakırsa otomatik isim verilir)
+    read -p "Bucket [mnist-training-$(date +%Y%m%d)]: " BUCKET_NAME
+    BUCKET_NAME=${BUCKET_NAME:-mnist-training-$(date +%Y%m%d)}
+    
+    info "Creating S3 bucket..."
+    if aws s3 ls "s3://$BUCKET_NAME" 2>&1 | grep -q 'NoSuchBucket'; then
+        [ "$AWS_REGION" = "us-east-1" ] && \
+            aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$AWS_REGION" || \
+            aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$AWS_REGION" --create-bucket-configuration LocationConstraint="$AWS_REGION"
+    fi
+    
+    export BUCKET=$BUCKET_NAME
+    export AWS_DEFAULT_REGION=$AWS_REGION
+    
+    info "Downloading and uploading MNIST data..."
+    python - << 'EOF'
+import torch, torchvision, numpy as np, boto3
+from torchvision import transforms
+from io import BytesIO
+import os
 
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-test_labels.npy', test_ds.targets.numpy())
+transform = transforms.Compose([transforms.ToTensor()])
+train_ds = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+test_ds = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+
+data = [
+    ('train_data.npy', train_ds.data.numpy().astype('float32') / 255.0),
+    ('train_labels.npy', train_ds.targets.numpy()),
+    ('test_data.npy', test_ds.data.numpy().astype('float32') / 255.0),
+    ('test_labels.npy', test_ds.targets.numpy())
 ]
 
 s3 = boto3.client('s3')
@@ -34,8 +55,36 @@ for name, arr in data:
     np.save(buf, arr)
     buf.seek(0)
     s3.upload_fileobj(buf, os.environ['BUCKET'], f"mnist-data/{name}")
+    print(f"✓ Uploaded {name}")
 EOF
-export BUCKET=$BUCKET_NAME
+
+    rm -rf ./data 2>/dev/null || true
+    
+    cat > .data-info << EOF
+AWS_REGION=$AWS_REGION
+BUCKET_NAME=$BUCKET_NAME
+DATA_PREPARED_DATE="$(date)"
+EOF
+    
+    success "Data prepared and uploaded to s3://${BUCKET_NAME}/mnist-data/"
+fi
+
+# Configuration
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+ECR_REPO_NAME="sagemaker-mnist"
+TRAINING_JOB_NAME="mnist-training-$(date +%s)"
+SAGEMAKER_ROLE_NAME="SageMakerExecutionRole"
+INSTANCE_TYPE="ml.m5.large"
+
+# Get or create SageMaker role
+ROLE_ARN=$(aws iam get-role --role-name "$SAGEMAKER_ROLE_NAME" --query 'Role.Arn' --output text 2>/dev/null || {
+    info "Creating SageMaker execution role..."
+    aws iam create-role --role-name "$SAGEMAKER_ROLE_NAME" \
+        --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"sagemaker.amazonaws.com"},"Action":"sts:AssumeRole"}]}' \
+        --query 'Role.Arn' --output text
+    aws iam attach-role-policy --role-name "$SAGEMAKER_ROLE_NAME" --policy-arn arn:aws:iam::aws:policy/AmazonSageMakerFullAccess
+    sleep 10
+})
 
 info "Setting up ECR..."
 aws ecr describe-repositories --repository-names "$ECR_REPO_NAME" --region "$AWS_REGION" &> /dev/null || \
