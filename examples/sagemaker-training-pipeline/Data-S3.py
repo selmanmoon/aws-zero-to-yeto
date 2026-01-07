@@ -32,7 +32,7 @@ train_labels = trainset.targets.numpy()
 test_data = testset.data.numpy()
 test_labels = testset.targets.numpy()
 
-# Normalize et (0-1 arası) daha güzel oluroyr 
+# Normalize et (0-1 arası) daha güzel olur 
 train_data = train_data.astype('float32') / 255.0
 test_data = test_data.astype('float32') / 255.0
 
