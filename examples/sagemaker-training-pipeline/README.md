@@ -196,11 +196,11 @@ aws s3 ls s3://<bucket-name>/mnist-data/
 
 ## 4. ECR Repository Oluşturma
 
-Docker image'ınızı saklamak için ECR repository'si oluştuşturalım. Repository adını `mnist-training` belirlendim ancak siz değiştirebilirsiniz:
+Docker image'ınızı saklamak için ECR repository'si oluştuşturalım. Repository adını `sagemaker-mnist` belirlendim ancak siz değiştirebilirsiniz:
 
 ```bash
 aws ecr create-repository \
-  --repository-name mnist-training \
+  --repository-name sagemaker-mnist \
   --region <region>
 ```
 
