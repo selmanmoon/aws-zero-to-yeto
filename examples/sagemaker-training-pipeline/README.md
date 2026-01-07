@@ -42,8 +42,12 @@ docker login
 
 ## 1. IAM Role Oluşturma
 
-SageMaker için gerekli izinlere sahip bir IAM role oluşturun. Role'ün en azından şu policy'lere sahip olması gerekir:
-- AmazonSageMakerFullAccess
+SageMaker için gerekli izinlere sahip bir IAM role oluşturun. **Üretim ortamı için** mümkün olduğunca dar kapsamlı (least‑privilege) özel bir IAM policy kullanmanız önerilir. Bu policy, yalnızca bu örnek için gereken izinleri içermelidir:
+- İlgili S3 bucket/prefix için okuma/yazma (training verisini okuma, model çıktılarını yazma)
+- Eğitim image’ının bulunduğu ECR repository’si için gerekli `ecr:GetAuthorizationToken`, `ecr:BatchGetImage`, `ecr:GetDownloadUrlForLayer` izinleri
+- Sadece bu projede kullanacağınız training job, model ve endpoint isimlerini kapsayan `sagemaker:CreateTrainingJob`, `sagemaker:DescribeTrainingJob`, `sagemaker:CreateModel`, vb. gerekli SageMaker aksiyonları
+
+> Not: Kolaylık olması için **sadece deneme / geliştirme ortamında**, geçici olarak geniş bir yönetilen policy (ör. `AmazonSageMakerFullAccess`) kullanılabilir. Ancak bu policy **üretim ortamında kullanılmamalı** ve daha sonra mutlaka daraltılmalıdır.
 ---
 
 ## Script ile Otomatik Deployment
