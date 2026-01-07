@@ -94,7 +94,7 @@ ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:
 
 info "Building and pushing Docker image..."
 aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com" > /dev/null
-docker buildx build --platform linux/amd64 -t "$ECR_URI" --push . > /dev/null
+docker buildx build --platform linux/amd64 -t "$ECR_URI" --push .
 
 info "Starting training job..."
 aws sagemaker create-training-job \
