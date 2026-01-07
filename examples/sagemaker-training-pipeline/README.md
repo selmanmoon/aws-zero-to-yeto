@@ -301,7 +301,7 @@ aws s3 rm s3://<bucket-name> --recursive
 aws s3api delete-bucket --bucket <bucket-name>
 
 # ECR repository'yi sil
-aws ecr delete-repository --repository-name mnist-training --force --region <region>
+aws ecr delete-repository --repository-name sagemaker-mnist --force --region <region>
 
 # Lokal dosyaları temizle
 rm -rf ./data model.tar.gz
