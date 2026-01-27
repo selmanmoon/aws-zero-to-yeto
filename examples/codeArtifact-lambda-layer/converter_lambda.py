@@ -18,6 +18,8 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
+from urllib.parse import unquote_plus
+
 
 # Initialize S3 client
 s3_client = boto3.client('s3')
@@ -156,6 +158,8 @@ def lambda_handler(event, context):
         record = event['Records'][0]
         bucket_name = record['s3']['bucket']['name']
         object_key = record['s3']['object']['key']
+        object_key = unquote_plus(object_key)
+
         
         print(f"📁 Processing: s3://{bucket_name}/{object_key}")
         

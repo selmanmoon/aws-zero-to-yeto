@@ -11,9 +11,10 @@ set -e  # Exit on error
 # ============================================================================
 
 # 1. Detect Python command
-if command -v python3 &> /dev/null; then
+
+if command -v python3 &> /dev/null && [ -n "$(python3 --version 2>/dev/null)" ]; then
     PYTHON_CMD="python3"
-elif command -v python &> /dev/null; then
+elif command -v python &> /dev/null && [ -n "$(python --version 2>/dev/null)" ]; then
     PYTHON_CMD="python"
 else
     echo "❌ Error: Python is not installed or not in PATH."
@@ -205,8 +206,6 @@ echo "============================================"
 echo "🌐 STEP 5: CloudFront & OAC"
 echo "============================================"
 
-# 1. DÜZELTME: Windows için Python komutunu sabitliyoruz
-PYTHON_CMD="python"
 
 # OAC Oluşturma
 OAC_ID=$(aws cloudfront create-origin-access-control \
@@ -273,9 +272,6 @@ rm bucket_policy.json
 
 echo "✅ Bucket Policy Updated!"
 
-# ============================================================================
-# STEP 6: LAMBDA DEPLOY
-# ============================================================================
 
 # ============================================================================
 # STEP 6: LAMBDA DEPLOY

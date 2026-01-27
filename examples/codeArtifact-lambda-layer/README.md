@@ -159,3 +159,16 @@ Mevcut yapıya üçüncü bir Lambda ekleyerek veya Converter Lambda'yı güncel
 ### 3. Kullanıcı Arayüzü (Upload)
 
 * S3 Presigned URL kullanarak Dashboard'a bir "Dosya Yükle" butonu ekleyip, CLI kullanmadan tarayıcıdan sürükle-bırak ile yükleme yapabilirsiniz.
+
+
+
+## Screenshots
+
+### 1. UI
+![UI](screenshots/ui.png)
+
+### 1. PPTX
+![PPTX](screenshots/pptx-photo.png)
+
+### 1. PDF
+![PDF](screenshots/pdf-photo.png)
